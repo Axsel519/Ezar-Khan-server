@@ -67,6 +67,7 @@ export class OrdersService {
       shippingAddress: createOrderDto.shippingAddress,
       phone: createOrderDto.phone,
       notes: createOrderDto.notes,
+      paymentMethod: createOrderDto.paymentMethod || 'cash-on-delivery',
     });
 
     return await order.save();

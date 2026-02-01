@@ -39,6 +39,9 @@ export class Order extends Document {
   @Prop()
   notes?: string;
 
+  @Prop({ default: 'cash-on-delivery' })
+  paymentMethod: string;
+
   createdAt: Date;
   updatedAt: Date;
 }

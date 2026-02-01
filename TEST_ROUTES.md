@@ -132,10 +132,13 @@ Authorization: Bearer YOUR_TOKEN
   ],
   "shippingAddress": "456 Delivery Ave, Shipping City, State 12345",
   "phone": "+1987654321",
-  "notes": "Please ring doorbell twice. Leave at front door if no answer."
+  "notes": "Please ring doorbell twice. Leave at front door if no answer.",
+  "paymentMethod": "cash-on-delivery"
 }
 ```
 Replace `PRODUCT_ID_1` and `PRODUCT_ID_2` with actual product IDs
+
+**Note:** `paymentMethod` is optional and defaults to "cash-on-delivery"
 
 #### Get My Orders
 ```http
@@ -466,7 +469,8 @@ curl -X POST http://localhost:3000/orders \
   -d '{
     "items": [{"productId": "PRODUCT_ID", "quantity": 1}],
     "shippingAddress": "123 Test St",
-    "phone": "+1234567890"
+    "phone": "+1234567890",
+    "paymentMethod": "cash-on-delivery"
   }'
 ```
 

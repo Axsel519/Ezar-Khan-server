@@ -22,4 +22,13 @@ export class CreateOrderDto {
   @IsString()
   @IsOptional()
   notes?: string;
+
+  @ApiProperty({ 
+    required: false, 
+    default: 'cash-on-delivery',
+    description: 'Payment method for the order'
+  })
+  @IsString()
+  @IsOptional()
+  paymentMethod?: string;
 }
