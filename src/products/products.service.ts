@@ -109,4 +109,12 @@ export class ProductsService {
       reviewCount: comments.length,
     });
   }
+
+  async getCategories(): Promise<string[]> {
+    const categories = await this.productModel
+      .distinct('category')
+      .exec();
+    
+    return categories.filter(category => category != null && category !== '');
+  }
 }

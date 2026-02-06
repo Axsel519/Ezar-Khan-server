@@ -32,6 +32,12 @@ export class ProductsController {
     return this.productsService.create(createProductDto);
   }
 
+  @Get('categories')
+  @ApiOperation({ summary: 'Get all product categories' })
+  getCategories() {
+    return this.productsService.getCategories();
+  }
+
   @Get()
   @ApiOperation({ summary: 'Get all products with pagination' })
   @ApiQuery({ name: 'page', required: false, type: Number })
