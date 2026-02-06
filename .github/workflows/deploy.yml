@@ -8,6 +8,7 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    environment: production
     
     steps:
       - name: Checkout code
@@ -35,9 +36,10 @@ jobs:
           script: |
             cd ${{ secrets.VPS_PROJECT_PATH }}
             git pull origin master
-            npm ci --only=production
+            npm install
             npm run build
-            pm2 restart ecommerce-api || pm2 start dist/main.js --name ecommerce-api
+            npm prune --production
+            pm2 restart ecommerce-api --update-env || pm2 start dist/main.js --name ecommerce-api --env production
             pm2 save
 
       - name: Deployment status
