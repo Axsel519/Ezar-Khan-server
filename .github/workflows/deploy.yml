@@ -1,0 +1,51 @@
+name: Deploy to VPS
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: production
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build application
+        run: npm run build
+
+      - name: Deploy to VPS
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USERNAME }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          port: ${{ secrets.VPS_PORT }}
+          script: |
+            cd ${{ secrets.VPS_PROJECT_PATH }}
+            git pull origin master
+            npm install
+            npm run build
+            npm prune --production
+            pm2 restart ecommerce-api --update-env || pm2 start dist/main.js --name ecommerce-api --env production
+            pm2 save
+
+      - name: Deployment status
+        if: success()
+        run: echo "✅ Deployment successful!"
+
+      - name: Deployment failed
+        if: failure()
+        run: echo "❌ Deployment failed!"
