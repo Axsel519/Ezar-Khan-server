@@ -31,4 +31,9 @@ export class CreateOrderDto {
   @IsString()
   @IsOptional()
   paymentMethod?: string;
+
+  @ApiProperty({ required: false })
+  @IsString()
+  @IsOptional()
+  couponCode?: string;
 }

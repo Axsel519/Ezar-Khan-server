@@ -9,6 +9,7 @@ import { Order } from '../schemas/order.schema';
 import { Product } from '../schemas/product.schema';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderStatusDto } from './dto/update-order-status.dto';
+import { CouponsService } from '../coupons/coupons.service';
 
 @Injectable()
 export class OrdersService {
@@ -17,6 +18,7 @@ export class OrdersService {
     private orderModel: Model<Order>,
     @InjectModel(Product.name)
     private productModel: Model<Product>,
+    private couponsService: CouponsService,
   ) {}
 
   async create(userId: string, createOrderDto: CreateOrderDto): Promise<Order> {
@@ -60,10 +62,30 @@ export class OrdersService {
       await product.save();
     }
 
+    let discountPercentage = 0;
+    let originalAmount = totalAmount;
+    let couponCode: string | undefined;
+
+    if (createOrderDto.couponCode) {
+      const validation = await this.couponsService.validateCoupon(
+        createOrderDto.couponCode,
+      );
+
+      if (validation.valid && validation.coupon) {
+        discountPercentage = validation.coupon.discountPercentage;
+        couponCode = validation.coupon.code;
+        totalAmount = totalAmount * (1 - discountPercentage / 100);
+        await this.couponsService.applyCoupon(createOrderDto.couponCode);
+      }
+    }
+
     const order = new this.orderModel({
       userId: new Types.ObjectId(userId),
       items: orderItems,
       totalAmount,
+      originalAmount,
+      discountPercentage,
+      couponCode,
       shippingAddress: createOrderDto.shippingAddress,
       phone: createOrderDto.phone,
       notes: createOrderDto.notes,

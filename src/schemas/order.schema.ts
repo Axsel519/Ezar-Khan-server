@@ -42,6 +42,15 @@ export class Order extends Document {
   @Prop({ default: 'cash-on-delivery' })
   paymentMethod: string;
 
+  @Prop()
+  couponCode?: string;
+
+  @Prop({ type: Number, default: 0 })
+  discountPercentage: number;
+
+  @Prop({ type: Number })
+  originalAmount?: number;
+
   createdAt: Date;
   updatedAt: Date;
 }
